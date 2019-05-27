@@ -1,6 +1,8 @@
 package meeting;
 
 import meeting.exceptions.MeetingEndBeforeStartException;
+import meeting.exceptions.ProgramSlotsOverlapException;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
@@ -12,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MeetingTest {
 
     @Test
-    public void testThatValidMeetingsCanBeInstantiated() throws MeetingEndBeforeStartException {
+    public void testThatValidMeetingsCanBeInstantiated() throws MeetingEndBeforeStartException, ProgramSlotsOverlapException {
         ProgramSlot[] programSlots = new ProgramSlot[2];
 
         ProgramSlot programSlot1 = new ProgramSlot(
@@ -44,12 +46,40 @@ public class MeetingTest {
     }
 
     @Test(expected = MeetingEndBeforeStartException.class)
-    public void testThatMeetingThrowsErrorWhenStartAfterEnd() throws MeetingEndBeforeStartException {
+    public void testThatMeetingThrowsErrorWhenStartAfterEnd() throws MeetingEndBeforeStartException, ProgramSlotsOverlapException {
         new Meeting(null,
                 null,
                 null,
                 LocalDateTime.of(2017, Month.DECEMBER, 15, 22, 0, 0),
                 LocalDateTime.of(2017, Month.DECEMBER, 15, 21, 0, 0),
                 null);
+    }
+
+    @Test(expected = ProgramSlotsOverlapException.class)
+    public void testThatMeetingThrowsErrorWhenProgramSlotsOverlap() throws ProgramSlotsOverlapException, MeetingEndBeforeStartException {
+        ProgramSlot[] programSlots = new ProgramSlot[2];
+
+        ProgramSlot programSlot1 = new ProgramSlot(
+                LocalDateTime.of(2017, Month.DECEMBER, 15, 19, 0, 0),
+                LocalDateTime.of(2017, Month.DECEMBER, 15, 21, 0, 0),
+                null,
+                null
+        );
+        programSlots[0] = programSlot1;
+
+        ProgramSlot programSlot2 = new ProgramSlot(
+                LocalDateTime.of(2017, Month.DECEMBER, 15, 20, 0, 0),
+                LocalDateTime.of(2017, Month.DECEMBER, 15, 21, 0, 0),
+                null,
+                null
+        );
+        programSlots[1] = programSlot2;
+
+        new Meeting(null,
+                null,
+                null,
+                LocalDateTime.of(2017, Month.DECEMBER, 15, 20, 0, 0),
+                LocalDateTime.of(2017, Month.DECEMBER, 15, 21, 0, 0),
+                new Programme(programSlots));
     }
 }

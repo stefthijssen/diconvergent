@@ -15,4 +15,12 @@ public class ProgramSlot {
         this.title = title;
         this.room = room;
     }
+
+    public LocalDateTime getStart() {
+        return start;
+    }
+
+    public LocalDateTime getEnd() {
+        return end;
+    }
 }

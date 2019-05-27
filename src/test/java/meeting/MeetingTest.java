@@ -1,5 +1,6 @@
 package meeting;
 
+import meeting.exceptions.MeetingEndBeforeStartException;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
@@ -11,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MeetingTest {
 
     @Test
-    public void testThatValidMeetingsCanBeInstantiated() {
+    public void testThatValidMeetingsCanBeInstantiated() throws MeetingEndBeforeStartException {
         ProgramSlot[] programSlots = new ProgramSlot[2];
 
         ProgramSlot programSlot1 = new ProgramSlot(
@@ -40,5 +41,15 @@ public class MeetingTest {
         );
 
         assertThat(meeting).isInstanceOf(Meeting.class);
+    }
+
+    @Test(expected = MeetingEndBeforeStartException.class)
+    public void testThatMeetingThrowsErrorWhenStartAfterEnd() throws MeetingEndBeforeStartException {
+        new Meeting(null,
+                null,
+                null,
+                LocalDateTime.of(2017, Month.DECEMBER, 15, 22, 0, 0),
+                LocalDateTime.of(2017, Month.DECEMBER, 15, 21, 0, 0),
+                null);
     }
 }
